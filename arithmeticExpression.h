@@ -12,7 +12,7 @@ struct TreeNode {
     char key;
     TreeNode* left;
     TreeNode* right;
-    TreeNode(char data, char key): data(data), key(key), left(0), right(0) {}
+    TreeNode(char data, char key): data(data), key(key), left(nullptr), right(nullptr) {}
 };
 
 class arithmeticExpression {
@@ -22,7 +22,7 @@ class arithmeticExpression {
 
         /* Helper function that returns an integer according to
        the priority of the given operator. */
-        int priority(char);
+        int priority(char key);
 
         /* Helper function that returns the postfix notation equivalent
         to the given infix expression */
@@ -32,27 +32,45 @@ class arithmeticExpression {
         by performing the inorder traversal of the tree.
         An opening and closing parenthesis must be added at the 
         beginning and ending of each expression. */
-        void infix(TreeNode *);
+        void infix(TreeNode* root);
 
         /* Helper function that outputs the prefix notation of the arithmetic expression tree
         by performing the preorder traversal of the tree. */
-        void prefix(TreeNode *);
+        void prefix(TreeNode* root);
 
         /* Helper function that outputs the postfix notation of the arithmetic expression tree
         by performing the postorder traversal of the tree. */
-        void postfix(TreeNode *);
+        void postfix(TreeNode* root);
 
         /* Helper function for generating the dotty file. This is a recursive function. */
-        void visualizeTree(ofstream &, TreeNode *);
+        void visualizeTree(ofstream& outFS, TreeNode* root);
 
     public:
         /* Initializes an empty tree and sets the infixExpression
         to the value of parameter passed in. */
-        arithmeticExpression(const string &);
+        arithmeticExpression(const string & value){
+            infixExpression = value;
+            root = nullptr;
+        }
 
-        /* Implementation of destrucor is optional.
-        The destructor should deallocate all the nodes in the tree. */
-        //~arithmeticExpression();
+        //destructor
+        ~arithmeticExpression(){
+            destruct(root);
+        }
+
+        //recursively delete each node
+        void destruct(TreeNode* node){
+            if (!node){
+                return;
+            }
+            destruct(node->left);
+            destruct(node->right);
+            delete node;
+        }
+        
+        //rule of three
+        arithmeticExpression(const arithmeticExpression&) = delete;
+        arithmeticExpression& operator=(const arithmeticExpression&) = delete;
 
         /* Converts the infixExpression to its equivalent postfix string
         and then generates the tree and assigns the root node to the 
@@ -60,14 +78,14 @@ class arithmeticExpression {
         void buildTree();
 
         /* Calls the recursive infix function. */
-        void infix();
+        void infix() { infix(root); }
 
         /* Calls the recursive prefix function. */
-        void prefix();
+        void prefix() { prefix(root); }
 
         /* Calls the recursive postfix function. */
-        void postfix();
+        void postfix() { postfix(root); }
 
         /* Calls the recursive visualizeTree function and generates the .png file using system call. */
-        void visualizeTree(const string &);
+        void visualizeTree(const string& outputFileName);
 };
